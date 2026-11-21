@@ -18,7 +18,8 @@
     "db:migrate": "tsx scripts/migrate.ts",
     "sync": "tsx scripts/sync.ts",
     "test:integration": "tsx scripts/integration.ts",
-    "test:browser": "tsx scripts/browser-check.ts"
+    "test:browser": "tsx scripts/browser-check.ts",
+    "outbox:process": "tsx scripts/process-outbox.ts"
   },
   "dependencies": {
     "@next/env": "^15.5.0",

@@ -56,6 +56,7 @@ This is **eventual consistency**, not a distributed ACID transaction. Partial ex
 
 ```powershell
 npm run sync
+npm run outbox:process
 npm run seed:vectors
 ```
 
@@ -63,9 +64,9 @@ Sync exits nonzero if events remain. Inspect service health and outbox last_erro
 
 ## Search approach
 
-LocalHashEmbeddingService lowercases alphanumeric tokens, hashes them into 384 weighted dimensions and normalizes them. Database mode uses Qdrant cosine similarity; demo mode combines cosine/token overlap. This is **local feature hashing**, not a trained medical semantic model; synonyms and negation have limited support. Adding an API key does not change the embedder. Scores measure text similarity, not diagnostic probability.
+LocalHashEmbeddingService lowercases alphanumeric tokens, hashes them into 384 weighted dimensions and normalizes them. Database mode uses Qdrant cosine similarity; demo mode combines cosine/token overlap. This is **local feature hashing**, not a trained medical semantic model; synonyms and negation have limited support. Set GOOGLE_API_KEY to enable the optional server-side Gemini embedding provider, with GOOGLE_EMBEDDING_MODEL and GOOGLE_EMBEDDING_DIMENSIONS. Existing collection dimensions are checked. Use a new QDRANT_COLLECTION and reindex before changing provider/model/dimensions; never mix embedding spaces. Without a key, local hashing remains the default. Scores measure text similarity, not diagnostic probability.
 
-The case library filters loaded records using browser-side substring matching. SQL FULLTEXT is separately implemented/demonstrated by the query script. Vector search filters age/gender/category. Date/diagnosis payload metadata are stored but have no current filter controls.
+The case library uses server-side filtering and pagination, with parameterized SQL and a maximum page size of 50. Scalar subqueries prevent multiple diagnoses/treatments from duplicating case rows. SQL FULLTEXT is separately implemented/demonstrated by the query script. Vector search filters age/gender/category. Date/diagnosis payload metadata are stored but have no current filter controls.
 
 ## Verification
 
@@ -88,3 +89,5 @@ See [requirements checklist](docs/requirements-checklist.md), [viva guide](docs/
 ## Project map
 
 app: pages/API routes; components: forms/tables/search; lib: connections/auth/validation/demo; services: case/user operations and synchronization; database: executable DB artifacts; scripts: setup/migration/seed/replay/test; docs: design/submission evidence; tests: unit checks.
+
+The background worker command drains the existing ordered case_sync_outbox queue. There is one canonical queue for create, update and delete, shared with Admin retry and search. It preserves ordering and does not introduce a separate creation-only queue.

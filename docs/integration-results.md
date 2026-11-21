@@ -1,6 +1,6 @@
 # Database integration results
 
-Recorded 2026-11-17T06:00:48.694Z. Actual execution against a local MySQL 8.4, MongoDB 7 and Qdrant stack with the Next.js server in database mode.
+Recorded 2026-11-21T09:04:41.852Z. Actual execution against a local MySQL 8.4, MongoDB 7 and Qdrant stack with the Next.js server in database mode.
 
 Command: npm run test:integration -- --outage
 
